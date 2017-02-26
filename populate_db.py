@@ -5,7 +5,6 @@ import os, sys, importlib
 from app.model_files.models import *
 from app.config import *
 from app.everything import *
-from data.all_universities import universities
 
 # Retreive the db path from the 
 conf = load_config('app/config.yaml')
@@ -47,148 +46,53 @@ dynamicDB.create_tables(get_classes('dynamic'), safe=True)
 
 # Populate Chemical Table with dummy data.
 
-for university in universities:
-  uni = University(uni_name=university["name"], emailtag=university["domain"])
-  uni.save()
-print "University Field Populated"
-
+p1 = Physician(
+    pName = "Dr. John Doe",
+    pAddress = "2292 US-27 #300, Somerset",
+    pCity   = "Somerset",
+    pState  = "KY",
+    pZip = 42501
+    )
+p1.save()
+print "Physician table populated"
 user1 = User(  
-  email      = "eykrevooh@berea.edu",
-  pwrd       = "password",
-  auth       = 0,
-  f_name     = "Kye",
-  l_name     = "Hoover",
-  uni_id     = 71
+  pwrd          = "1234",
+  fName         = "Ishwar",
+  lName         = "Agarwal",
+  memberId      = "MXXXXXXXX",
+  dob           = datetime.strptime('Jun 1 2005  1:33PM', '%b %d %Y %I:%M%p'),
+  effectiveDate = datetime.strptime('Jun 10 2015  1:33PM', '%b %d %Y %I:%M%p'),
+  telephone     = "859-XXX-XXX",
+  physician     = p1.pId,
+  lastChecked   = datetime.strptime('Jun 1 2016  1:33PM', '%b %d %Y %I:%M%p'),
+  period        = timedelta(days=180)
   )
-print "User table populated"
 user1.save()
-
-prof1 = User(
-  email      = "jadudm@berea.edu",
-  pwrd       = "password",
-  auth       = 2,
-  f_name     = "Matt",
-  l_name     = "Jadud",
-  uni_id     = 71
-  )
 print "User table populated"
-prof1.save()
-
-field1 = Field(
-    name       = "Computer Science",
-    uni_id     = 71
+user2 = User(  
+  fName         = "Xhafer",
+  lName         = "Rama",
+  pwrd          = "1234",
+  memberId      = "MXXXXXXX",
+  dob           = datetime.strptime('Jun 1 2001  1:33PM', '%b %d %Y %I:%M%p'),
+  effectiveDate = datetime.strptime('Jun 10 2015  1:33PM', '%b %d %Y %I:%M%p'),
+  telepone      = "859-XXX-XXX",
+  physician     = p1.pId,
+  lastChecked   = datetime.strptime('Jun 1 2015  1:33PM', '%b %d %Y %I:%M%p'),
+  period        = timedelta(days=180)
+  )
+user2.save()
+print "User table populated"
+rel1 = Relationship(
+    f1 = user1.uId,
+    f2 = user2.uId,
+    relationtype = "Friend"
     )
-print "Field table populated"
-field1.save()
-
-field1 = Field(
-    name       = "Philosophy",
-    uni_id     = 71
+rel1.save()
+rel2 = Relationship(
+    f1 = user2.uId,
+    f2 = user1.uId,
+    relationtype = "Friend"
     )
-print "Field table populated"
-field1.save()
-
-field1 = Field(
-    name       = "Mathematics",
-    uni_id     = 71
-    )
-print "Field table populated"
-field1.save()
-
-field1 = Field(
-    name       = "Chemistry",
-    uni_id     = 71
-    )
-print "Field table populated"
-field1.save()
-
-field1 = Field(
-    name       = "Economics",
-    uni_id     = 71
-    )
-print "Field table populated"
-field1.save()
-
-field1 = Field(
-    name       = "Nursing",
-    uni_id     = 71
-    )
-print "Field table populated"
-field1.save()
-
-field1 = Field(
-    name       = "History",
-    uni_id     = 71
-    )
-print "Field table populated"
-field1.save()
-
-course1 = Course(
-    course_name = "CSC 101",
-    field_id    = 1
-    )
-print "Course table populated"
-course1.save()
-
-course1 = Course(
-    course_name = "CSC 226",
-    field_id    = 1
-    )
-print "Course table populated"
-course1.save()
-
-course1 = Course(
-    course_name = "CSC 315",
-    field_id    = 1
-    )
-print "Course table populated"
-course1.save()
-
-course1 = Course(
-    course_name = "MAT 135",
-    field_id    = 3
-    )
-print "Course table populated"
-course1.save()
-
-course1 = Course(
-    course_name = "MAT 235",
-    field_id    = 3
-    )
-print "Course table populated"
-course1.save()
-
-course1 = Course(
-    course_name = "MAT 335",
-    field_id    = 3
-    )
-print "Course table populated"
-course1.save()
-
-
-p_2_c1 = Professor_Course(
-    cid        = 1,
-    uid        = 2
-    )
-print "Professor Mapping Made"
-p_2_c1.save()
-
-
-question1 = Question(
-    qtitle     = "What is a hackathon?",
-    question   = "It'd be really great if someone could explain what exactly is a hackathon? What do you do in it? Is it a team event? If yes, what are team sizes? I have absolutely no clue.",
-    uid        = 1,
-    p_to_c     = 1
-    )
-print "Question was populated"
-question1.save()
-
-answer1 = Answer(
-    qid        = question1.qid,
-    answer     = "Because you worship Satan",
-    uid        = prof1.uid,
-    approval   = True
-    )
-print "The Answer was saved"
-answer1.save()
-
+rel2.save()
+print "Relationships created"

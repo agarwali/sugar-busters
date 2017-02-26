@@ -2,13 +2,9 @@
 
 models:
     dynamic:
-        - University
         - User
-        - Field
-        - Course
-        - Professor_Course
-        - Question
-        - Answer
+        - Relationship
+        - Physician
 
 
 tag: "derbyhacks"

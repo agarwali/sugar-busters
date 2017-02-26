@@ -1,17 +1,13 @@
 from peewee import *
 import os
-import datetime
+from datetime import datetime, timedelta
 
 # Create a database
 from app.config import load_config
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
-###
-#Removed when moving away from sqlite
-#cfg = load_config('api/config.yaml')
-#print cfg['databases']
-###
-dynamicDB = MySQLDatabase("derbyhacks", host=os.getenv('IP'), user=os.getenv('C9_USER'), passwd="")
+
+dynamicDB = MySQLDatabase("sugar_busters", host=os.getenv('IP'), user=os.getenv('C9_USER'), passwd="")
 
 
 class DynamicModel (Model):
@@ -21,60 +17,32 @@ class DynamicModel (Model):
 ######################################################
 # DYNAMIC MODELS
 ######################################################
-
-class University (DynamicModel):
-    uni_id         = PrimaryKeyField()
-    uni_name       = CharField()
-    emailtag       = CharField()
     
+class Physician (DynamicModel):
+  pId           = PrimaryKeyField()
+  pName         = CharField()
+  pAddress      = CharField()
+  pCity         = CharField()
+  pState        = CharField()
+  pZip          = IntegerField()
 
 class User (DynamicModel):
-    uid           = PrimaryKeyField()
-    email         = CharField(unique = True)
-    pwrd          = CharField(null = False)
-    auth          = IntegerField(null = False)
-    f_name        = CharField()
-    l_name        = CharField()
-    uni_id        = ForeignKeyField(University)
+  uId           = PrimaryKeyField()
+  pwrd          = CharField(null = False)
+  fName         = CharField()
+  lName         = CharField()
+  memberId      = CharField()
+  dob           = DateTimeField()
+  effectiveDate = DateTimeField()
+  telephone     = CharField()
+  physician     = ForeignKeyField(Physician)
+  lastChecked   = DateTimeField()
+  profilePic    = CharField(null=True)
+  period        = DateTimeField()
+  
 
-class Field (DynamicModel):
-    field_id      = PrimaryKeyField()
-    name          = CharField()
-    uni_id        = ForeignKeyField(University)
-    
-class Course (DynamicModel):
-    cid           = PrimaryKeyField()
-    course_name   = CharField()
-    field_id      = ForeignKeyField(Field)
-    
-class Professor_Course (DynamicModel):
-    p_to_c_id     = PrimaryKeyField()
-    cid           = ForeignKeyField(Course)
-    uid           = ForeignKeyField(User)
-    
-class Question (DynamicModel):
-    qid           = PrimaryKeyField()
-    qtitle        = TextField()
-    question      = TextField()
-    date          = DateTimeField(default = datetime.datetime.now)
-    uid           = ForeignKeyField(User)
-    p_to_c        = ForeignKeyField(Professor_Course)
-    
-class Answer (DynamicModel):
-    aid          = PrimaryKeyField()
-    qid          = ForeignKeyField(Question)
-    answer       = TextField()
-    date         = DateTimeField(default = datetime.datetime.now)
-    uid          = ForeignKeyField(User)
-    approval     = BooleanField(default = False)
-    
-    
-########################
-## Functions for working with Flask Modals
-########################
-"""
-def models_to_dicts(models):
-    list_dicts =[]
-    for model in models
-
-"""
+class Relationship (DynamicModel):
+  rId           = PrimaryKeyField()
+  f1            = ForeignKeyField(User, related_name='f1_f2')
+  f2            = ForeignKeyField(User, related_name='f2_f1')
+  relationtype  = CharField()

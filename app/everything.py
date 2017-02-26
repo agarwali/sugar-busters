@@ -21,12 +21,17 @@ from model_files.models import *
 ######################################################
 # Set up the Flask app
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'user_login'
-
-
-from app.config import load_config
 cfg = load_config('app/config.yaml')
+
+@app.before_request
+def before_request():
+    g.dbMain = dynamicDB.connect()
+
+
+@app.teardown_request
+def teardown_request(exception):
+    dbM = getattr(g, 'db', None)
+    if (dbM is not None) and (not dbM.is_closed()):
+        dbM.close()
